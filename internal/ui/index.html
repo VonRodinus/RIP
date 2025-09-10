@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <title>Chronus - Артефакты</title>
+    <meta name="description" content="В основе работы Chronus лежит постоянно обновляемая база данных артефактов с установленной датировкой." />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=EB+Garamond:wght@400&display=swap" rel="stylesheet">
+    <style>
+        a { text-decoration: none; color: inherit; }
+        .artifact-card a:hover { text-decoration: underline; text-decoration-color: yellow; }
+    </style>
+</head>
+<body>
+<div class="desktop">
+
+    <!-- Навбар -->
+    <header class="header" id="mainHeader">
+        <div class="nav-container">
+            <div class="nav-background"></div>
+            <div class="nav-content">
+                <div class="logo-section">
+                    <a href="/" class="logo-text">Chronus</a>
+                </div>
+                <nav class="navigation">
+                    <a href="/" class="nav-button artifacts-button">
+                        <img src="http://localhost:9000/artifacts/vase_icon.png" alt="Артефакты" class="nav-icon" />
+                        <span class="nav-link">Артефакты</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="white-section"> </div>
+
+    <!-- Секция с картинкой -->
+    <section class="hero-section">
+        <img class="hero-image" src="http://localhost:9000/artifacts/artifacts_picture.jpg" alt="Коллекция артефактов" />
+        <div class="hero-overlay">
+            <h1 class="hero-title">Артефакты</h1>
+            <form class="search-container" method="GET" action="/">
+                <input type="text" name="search" class="search-input" placeholder="Поиск артефактов..." value="{{.SearchQuery}}" />
+                <button type="submit" class="search-icon-btn">
+                    <img src="http://localhost:9000/artifacts/search_icon.png" alt="Поиск" class="search-icon" />
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Описание -->
+    <section class="description-section">
+        <p class="description-text">
+            В основе работы Chronus лежит постоянно обновляемая база данных артефактов с установленной датировкой. Наш
+            каталог — это живой инструмент для исследователей, создаваемый и проверяемый экспертами.
+        </p>
+    </section>
+
+    <!-- Секция с артефактами -->
+    <section class="artifacts-section">
+        <div class="section-header">
+            <div class="section-line"></div>
+            <h2 class="section-title">ПОЗНАКОМЬТЕСЬ С КОЛЛЕКЦИЕЙ</h2>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="artifacts-grid">
+            {{range .Artifacts}}
+            <article class="artifact-card">
+                <a href="/artifact/{{.ID}}">
+                    <img class="artifact-image" src="{{.ImageURL}}" alt="{{.Name}}" />
+                    <h3 class="artifact-title">{{.Name}}</h3>
+                    <p class="artifact-period">Период бытования: {{.Period}}</p>
+                </a>
+                <button class="add-to-request-btn">
+                    <span class="btn-text">Добавить в расчёт</span>
+                </button>
+            </article>
+            {{end}}
+        </div>
+
+        <a href="/calculation" class="calculate-btn">
+            <img src="http://localhost:9000/artifacts/feather_icon.png" alt="Расчёт" />
+        </a>
+    </section>
+
+        
+    <div style="display: none;">
+        <!-- ID заявки -->
+        <span id="debug-request-id">{{.CurrentRequest.ID}}</span>
+        <!-- Количество в корзине -->
+        <span id="debug-request-count">{{.RequestCount}}</span>
+        <!-- ID услуг в корзине -->
+        <span id="debug-request-items">
+            {{range .CurrentRequest.Items}}
+            {{.ArtifactID}},
+            {{else}}
+            empty
+            {{end}}
+        </span>
+    </div>
+
+</div>
+
+
+</body>
+</html>

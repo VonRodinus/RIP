@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <title>Chronus - Расчёт времени строительства объекта</title>
+    <meta name="description" content="Расчёт времени строительства объекта с использованием метода TPQ на основе артефактов" />
+    <link rel="stylesheet" href="/static/css/style2.css" />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=EB+Garamond:wght@400&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="desktop">
+
+    <!-- Навбар -->
+    <header class="header" id="mainHeader">
+        <div class="nav-container">
+            <div class="nav-background"></div>
+            <div class="nav-content">
+                <div class="logo-section">
+                    <a href="/" class="logo-text">Chronus</a>
+                </div>
+                <nav class="navigation">
+                    <a href="/" class="nav-button artifacts-button">
+                        <img src="http://localhost:9000/artifacts/vase_icon.png" alt="Артефакты" class="nav-icon" />
+                        <span class="nav-link">Артефакты</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="white-section"> </div>
+
+    <!-- Основной контент -->
+    <main class="calculation-content">
+
+        <!-- Заголовок секции -->
+        <h1 class="calculation-title">Расчёт времени строительства объекта</h1>
+
+        <!-- Форма выбора объекта -->
+        <form class="calculation-form">
+            <div class="form-group">
+                <div class="select-container">
+                    <select id="object-select" class="object-select">
+                        <option value="">Выберите объект...</option>
+                        <option value="object1">Объект 1</option>
+                        <option value="object2">Объект 2</option>
+                        <option value="object3">Объект 3</option>
+                    </select>
+                </div>
+                <button type="button" class="save-button">
+                    <span class="button-text">Сохранить</span>
+                </button>
+            </div>
+        </form>
+
+        <!-- Сетка артефактов -->
+        <section class="artifacts-grid calculation-grid">
+            <article class="artifact-card">
+                <a href="/artifact/denarii">
+                    <img class="artifact-image" src="http://localhost:9000/artifacts/denarii.webp" alt="Денарий императора Траяна" />
+                    <h3 class="artifact-title">Денарий императора Траяна</h3>
+                    <p class="artifact-period">Период бытования: 98-117 гг. н.э.</p>
+                </a>
+                <!-- Иконка удаления -->
+                <img src="http://localhost:9000/artifacts/delete_icon.png" alt="Удалить" class="artifact-delete-icon" />
+            </article>
+
+            <article class="artifact-card">
+                <a href="/artifact/dressel20">
+                    <img class="artifact-image" src="http://localhost:9000/artifacts/amfora.webp" alt="Обломок амфоры типа Dressel 20" />
+                    <h3 class="artifact-title">Обломок амфоры типа<br />Dressel 20</h3>
+                    <p class="artifact-period">Период бытования: 90-200 гг. н.э.</p>
+                </a>
+                <img src="http://localhost:9000/artifacts/delete_icon.png" alt="Удалить" class="artifact-delete-icon" />
+            </article>
+
+            <article class="artifact-card">
+                <a href="/artifact/girya">
+                    <img class="artifact-image" src="http://localhost:9000/artifacts/girya.png" alt="Бронзовая гирька от римских весов" />
+                    <h3 class="artifact-title">Бронзовая гирька от<br />римских весов</h3>
+                    <p class="artifact-period">Период бытования: 120-190 гг. н.э.</p>
+                </a>
+                <img src="http://localhost:9000/artifacts/delete_icon.png" alt="Удалить" class="artifact-delete-icon" />
+            </article>
+        </section>
+
+        <!-- Результаты расчета -->
+        <div class="calculation-results">
+            <div class="results-container">
+                <span class="results-label">Результат расчёта:</span>
+                <div class="results-value">—</div>
+            </div>
+            <button type="button" class="calculate-button">
+                <span class="button-text">Рассчитать</span>
+            </button>
+        </div>
+    </main>
+
+    <!-- Плавающая кнопка расчета -->
+    <button class="calculate-btn" type="button">
+        <img src="http://localhost:9000/artifacts/feather_icon.png" alt="Расчёт" />
+    </button>
+</div>
+
+
+</script>
+</body>
+</html>
