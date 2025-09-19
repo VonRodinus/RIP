@@ -12,7 +12,7 @@
         .artifact-card a:hover { text-decoration: underline; text-decoration-color: yellow; }
     </style>
 </head>
-<body>
+<body>  
 <div class="desktop">
 
     <!-- Навбар -->
@@ -23,12 +23,6 @@
                 <div class="logo-section">
                     <a href="/" class="logo-text">Chronus</a>
                 </div>
-                <nav class="navigation">
-                    <a href="/" class="nav-button artifacts-button">
-                        <img src="http://localhost:9000/artifacts/vase_icon.png" alt="Артефакты" class="nav-icon" />
-                        <span class="nav-link">Артефакты</span>
-                    </a>
-                </nav>
             </div>
         </div>
     </header>
@@ -51,9 +45,9 @@
 
     <!-- Описание -->
     <section class="description-section">
-        <p class="description-text">
-            В основе работы Chronus лежит постоянно обновляемая база данных артефактов с установленной датировкой. Наш
-            каталог — это живой инструмент для исследователей, создаваемый и проверяемый экспертами.
+        <p class="description-main-text"> </p>
+        <p align="center">   В основе работы Chronus лежит постоянно обновляемая база данных артефактов с установленной датировкой.
+            Наш каталог — это живой инструмент для исследователей, создаваемый и проверяемый экспертами.
         </p>
     </section>
 
@@ -84,22 +78,6 @@
             <img src="http://localhost:9000/artifacts/feather_icon.png" alt="Расчёт" />
         </a>
     </section>
-
-        
-    <div style="display: none;">
-        <!-- ID заявки -->
-        <span id="debug-request-id">{{.CurrentRequest.ID}}</span>
-        <!-- Количество в корзине -->
-        <span id="debug-request-count">{{.RequestCount}}</span>
-        <!-- ID услуг в корзине -->
-        <span id="debug-request-items">
-            {{range .CurrentRequest.Items}}
-            {{.ArtifactID}},
-            {{else}}
-            empty
-            {{end}}
-        </span>
-    </div>
 
 </div>
 
