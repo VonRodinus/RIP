@@ -5,10 +5,22 @@ import (
 	"html/template"
 	"net/http"
 	"path/filepath"
+	"strings"
 )
 
-// CalcHandler обрабатывает страницу расчета
-func CalcHandler(w http.ResponseWriter, r *http.Request) {
+func GetOrder(w http.ResponseWriter, r *http.Request) {
+
+	pathParts := strings.Split(r.URL.Path, "/")
+	if len(pathParts) < 3 {
+		http.NotFound(w, r)
+		return
+	}
+	orderID := pathParts[2]
+
+	if models.CurrentRequest.ID != orderID {
+		http.NotFound(w, r)
+		return
+	}
 
 	data := struct {
 		Artifacts      []models.Artifact

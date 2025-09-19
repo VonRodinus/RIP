@@ -29,7 +29,7 @@
 
     <!-- НОВЫЙ КОНТЕЙНЕР ДЛЯ ИКОНКИ КОРЗИНЫ -->
     <div class="cart-icon-container">
-        <a href="/calculation" class="cart-icon-link">
+        <a href="/order/{{.CurrentRequest.ID}}" class="cart-icon-link">
             <img src="http://localhost:9000/artifacts/feather_icon.png" alt="Перейти к расчёту" class="cart-icon" />
             <!-- Счетчик количества в корзине -->
             <span class="cart-count">{{.RequestCount}}</span>

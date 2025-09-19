@@ -10,7 +10,7 @@ func main() {
 	// Настройка маршрутов
 	http.HandleFunc("/", handlers.CatalogHandler)
 	http.HandleFunc("/artifact/", handlers.DetailHandler)
-	http.HandleFunc("/calculation", handlers.CalcHandler)
+	http.HandleFunc("/order/", handlers.GetOrder)
 
 	// Обслуживание статических файлов
 	fs := http.FileServer(http.Dir("static"))
