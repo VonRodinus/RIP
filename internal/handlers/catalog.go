@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"RIP/internal/models"
+	"fmt"
 	"net/http"
 )
 
@@ -38,7 +39,10 @@ func filterArtifacts(query string) []models.Artifact {
 
 	var filtered []models.Artifact
 	for _, artifact := range models.Artifacts {
-		if contains(artifact.Name, query) || contains(artifact.Period, query) {
+		if contains(artifact.Name, query) ||
+			contains(fmt.Sprintf("%d", artifact.StartDate), query) ||
+			contains(fmt.Sprintf("%d", artifact.EndDate), query) ||
+			contains(artifact.Epoch, query) {
 			filtered = append(filtered, artifact)
 		}
 	}

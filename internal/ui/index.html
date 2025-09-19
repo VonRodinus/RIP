@@ -27,6 +27,15 @@
         </div>
     </header>
 
+    <!-- НОВЫЙ КОНТЕЙНЕР ДЛЯ ИКОНКИ КОРЗИНЫ -->
+    <div class="cart-icon-container">
+        <a href="/calculation" class="cart-icon-link">
+            <img src="http://localhost:9000/artifacts/feather_icon.png" alt="Перейти к расчёту" class="cart-icon" />
+            <!-- Счетчик количества в корзине -->
+            <span class="cart-count">{{.RequestCount}}</span>
+        </a>
+    </div>
+
     <div class="white-section"> </div>
 
     <!-- Секция с картинкой -->
@@ -65,7 +74,7 @@
                 <a href="/artifact/{{.ID}}">
                     <img class="artifact-image" src="{{.ImageURL}}" alt="{{.Name}}" />
                     <h3 class="artifact-title">{{.Name}}</h3>
-                    <p class="artifact-period">Период бытования: {{.Period}}</p>
+                    <p class="artifact-period">Период бытования: {{.StartDate}}-{{.EndDate}} {{.Epoch}}</p>
                 </a>
                 <button class="add-to-request-btn">
                     <span class="btn-text">Добавить в расчёт</span>
@@ -74,13 +83,8 @@
             {{end}}
         </div>
 
-        <a href="/calculation" class="calculate-btn">
-            <img src="http://localhost:9000/artifacts/feather_icon.png" alt="Расчёт" />
-        </a>
     </section>
 
 </div>
-
-
 </body>
 </html>
