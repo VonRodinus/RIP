@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <title>Chronus - Расчёт времени строительства объекта</title>
+    <meta name="description" content="Расчёт времени строительства объекта с использованием метода TPQ на основе артефактов" />
+    <link rel="stylesheet" href="/static/css/style2.css" />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=EB+Garamond:wght@400&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="desktop">
+
+    <!-- Навбар -->
+    <header class="header" id="mainHeader">
+        <div class="nav-container">
+            <div class="nav-background"></div>
+            <div class="nav-content">
+                <div class="logo-section">
+                    <a href="/" class="logo-text">Chronus</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="white-section"> </div>
+
+    <!-- Основной контент -->
+    <main class="calculation-content">
+
+        <!-- Заголовок секции -->
+        <h1 class="calculation-title">Расчёт времени строительства объекта</h1>
+
+        <!-- Форма выбора объекта -->
+    <form class="calculation-form">
+        <div class="form-group">
+            <div class="select-container">
+                <input type="text" placeholder="Название раскопки" class="object-input" />
+            </div>
+            <button type="button" class="save-button">
+                <span class="button-text">Сохранить</span>
+            </button>
+        </div>
+    </form>
+
+        <!-- СПИСОК АРТЕФАКТОВ В ЗАЯВКЕ - ГОРИЗОНТАЛЬНЫЕ КАРТОЧКИ -->
+        <section class="request-items-list">
+            <article class="request-item">
+                <div class="request-item-content">
+                    <img class="request-item-image" src="http://localhost:9000/artifacts/denarii.webp" alt="Денарий императора Траяна" />
+                    <div class="request-item-info">
+                        <div class="request-item-main">
+                            <h3 class="request-item-title">Денарий императора Траяна</h3>
+                            <p class="request-item-period">Период бытования: 98-117 гг. н.э.</p>
+                            <p class="request-item-tpq">TPQ: 117 г. н.э.</p>
+                        </div>
+                        <div class="request-item-description">
+                            <input type="text" placeholder="Описание находки" class="description-input" />
+                        </div>
+                    </div>
+                    <img src="http://localhost:9000/artifacts/delete_icon.png" alt="Удалить" class="request-item-delete" />
+                </div>
+            </article>
+            
+
+            <article class="request-item">
+                <div class="request-item-content">
+                    <img class="request-item-image" src="http://localhost:9000/artifacts/amfora.webp" alt="Обломок амфоры типа Dressel 20" />
+                    <div class="request-item-info">
+                        <div class="request-item-main">
+                            <h3 class="request-item-title">Обломок амфоры типа Dressel 20</h3>
+                            <p class="request-item-period">Период бытования: 90-200 гг. н.э.</p>
+                            <p class="request-item-tpq">TPQ: 200 г. н.э.</p>
+                        </div>
+                        <div class="request-item-description">
+                            <input type="text" placeholder="Описание находки" class="description-input" />
+                        </div>
+                    </div>
+                    <img src="http://localhost:9000/artifacts/delete_icon.png" alt="Удалить" class="request-item-delete" />
+                </div>
+            </article>
+
+            <article class="request-item">
+                <div class="request-item-content">
+                    <img class="request-item-image" src="http://localhost:9000/artifacts/girya.png" alt="Бронзовая гирька от римских весов" />
+                    <div class="request-item-info">
+                        <div class="request-item-main">
+                            <h3 class="request-item-title">Бронзовая гирька от римских весов</h3>
+                            <p class="request-item-period">Период бытования: 120-190 гг. н.э.</p>
+                            <p class="request-item-tpq">TPQ: 190 г. н.э.</p>
+                        </div>
+                        <div class="request-item-description">
+                            <input type="text" placeholder="Описание находки" class="description-input" />
+                        </div>
+                    </div>
+                    <img src="http://localhost:9000/artifacts/delete_icon.png" alt="Удалить" class="request-item-delete" />
+                </div>
+            </article>
+        </section>
+
+        <!-- Результаты расчета -->
+    <div class="calculation-results">
+        <div class="results-container">
+            <span class="results-label">Датировка из расчёта:</span>
+            <div class="results-value">—</div>
+        </div>
+        <button type="button" class="calculate-button">
+            <span class="button-text">Рассчитать</span>
+        </button>
+    </div>
+    </main>
+</div>
+</body>
+</html>
