@@ -8,9 +8,9 @@ import (
 
 func main() {
 	// Настройка маршрутов
-	http.HandleFunc("/", handlers.CatalogHandler)
-	http.HandleFunc("/artifact/", handlers.DetailHandler)
-	http.HandleFunc("/order/", handlers.GetOrder)
+	http.HandleFunc("/", handlers.ArtifactCatalogHandler)
+	http.HandleFunc("/artifact/", handlers.ArtifactDetailHandler)
+	http.HandleFunc("/tpq_request/", handlers.BuildingTPQCalcHandler)
 
 	// Обслуживание статических файлов
 	fs := http.FileServer(http.Dir("static"))

@@ -7,7 +7,7 @@ import (
 )
 
 // DetailHandler обрабатывает страницу детального просмотра артефакта
-func DetailHandler(w http.ResponseWriter, r *http.Request) {
+func ArtifactDetailHandler(w http.ResponseWriter, r *http.Request) {
 
 	pathParts := strings.Split(r.URL.Path, "/")
 	if len(pathParts) < 3 {
@@ -28,7 +28,7 @@ func DetailHandler(w http.ResponseWriter, r *http.Request) {
 		RequestCount int
 	}{
 		Artifact:     *artifact,
-		RequestCount: len(models.CurrentRequest.Items),
+		RequestCount: len(models.CurrentTPQRequest.TPQItems),
 	}
 
 	renderTemplate(w, "artifact-detail.html", data)

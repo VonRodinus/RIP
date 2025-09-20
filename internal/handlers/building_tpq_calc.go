@@ -2,13 +2,14 @@ package handlers
 
 import (
 	"RIP/internal/models"
+	"bytes"
 	"html/template"
 	"net/http"
 	"path/filepath"
 	"strings"
 )
 
-func GetOrder(w http.ResponseWriter, r *http.Request) {
+func BuildingTPQCalcHandler(w http.ResponseWriter, r *http.Request) {
 
 	pathParts := strings.Split(r.URL.Path, "/")
 	if len(pathParts) < 3 {
@@ -17,20 +18,20 @@ func GetOrder(w http.ResponseWriter, r *http.Request) {
 	}
 	orderID := pathParts[2]
 
-	if models.CurrentRequest.ID != orderID {
+	if models.CurrentTPQRequest.ID != orderID {
 		http.NotFound(w, r)
 		return
 	}
 
 	data := struct {
-		Artifacts      []models.Artifact
-		CurrentRequest models.CalculationRequest
+		Artifacts         []models.Artifact
+		CurrentTPQRequest models.TPQCalculationRequest
 	}{
-		Artifacts:      models.Artifacts,
-		CurrentRequest: models.CurrentRequest,
+		Artifacts:         models.Artifacts,
+		CurrentTPQRequest: models.CurrentTPQRequest,
 	}
 
-	renderTemplate(w, "calculation.html", data)
+	renderTemplate(w, "building_tpq_calc.html", data)
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
@@ -41,9 +42,14 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 		return
 	}
 
-	err = t.Execute(w, data)
-	if err != nil {
+	// Создаём буфер и рендерим в него
+	var buf bytes.Buffer
+	if err := t.Execute(&buf, data); err != nil {
 		http.Error(w, "Template execution error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	// Если всё прошло – только теперь пишем в ответ
+	w.WriteHeader(http.StatusOK)
+	buf.WriteTo(w)
 }

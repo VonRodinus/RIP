@@ -7,29 +7,29 @@ import (
 )
 
 // CatalogHandler обрабатывает главную страницу с каталогом артефактов
-func CatalogHandler(w http.ResponseWriter, r *http.Request) {
+func ArtifactCatalogHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
 	}
 
-	searchQuery := r.URL.Query().Get("search")
+	searchQuery := r.URL.Query().Get("artifact_name_or_tpq_filter")
 
 	filteredArtifacts := filterArtifacts(searchQuery)
 
 	data := struct {
-		Artifacts      []models.Artifact
-		SearchQuery    string
-		RequestCount   int
-		CurrentRequest models.CalculationRequest
+		Artifacts         []models.Artifact
+		SearchQuery       string
+		RequestCount      int
+		CurrentTPQRequest models.TPQCalculationRequest
 	}{
-		Artifacts:      filteredArtifacts,
-		SearchQuery:    searchQuery,
-		RequestCount:   len(models.CurrentRequest.Items),
-		CurrentRequest: models.CurrentRequest,
+		Artifacts:         filteredArtifacts,
+		SearchQuery:       searchQuery,
+		RequestCount:      len(models.CurrentTPQRequest.TPQItems),
+		CurrentTPQRequest: models.CurrentTPQRequest,
 	}
 
-	renderTemplate(w, "index.html", data)
+	renderTemplate(w, "artifact_catalog.html", data)
 }
 
 func filterArtifacts(query string) []models.Artifact {

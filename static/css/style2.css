@@ -36,23 +36,6 @@
     align-items: center;
 }
 
-.object-select {
-    width: 100%;
-    height: 100%;
-    border: none;
-    background: transparent;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 16px;
-    color: #000000;
-    outline: none;
-    cursor: pointer;
-}
-
-.object-select:focus {
-    outline: 2px solid #008573;
-    outline-offset: 2px;
-}
-
 .save-button {
     width: 166px;
     height: 35px;
@@ -118,7 +101,6 @@
     gap: 30px;
 }
 
-
 .request-item-main {
     display: flex;
     align-items: center;
@@ -150,7 +132,6 @@
     font-weight: 600;
     color: #008573;
 }
-
 
 .request-item-delete {
     width: 20px;

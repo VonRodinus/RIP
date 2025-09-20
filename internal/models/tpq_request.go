@@ -1,21 +1,21 @@
 package models
 
-type RequestItem struct {
+type TPQRequestItem struct {
 	ArtifactID string
 	Comment    string // Описание находки (из м-м)
 }
 
-type CalculationRequest struct {
+type TPQCalculationRequest struct {
 	ID         string
 	Excavation string // Название раскопки
-	Items      []RequestItem
+	TPQItems   []TPQRequestItem
 	Result     string
 }
 
-var CurrentRequest = CalculationRequest{
+var CurrentTPQRequest = TPQCalculationRequest{
 	ID:         "req_001",
 	Excavation: "",
-	Items:      []RequestItem{},
+	TPQItems:   []TPQRequestItem{},
 	Result:     "—",
 }
 
