@@ -1,29 +1,25 @@
 package models
 
+import (
+	"time"
+)
+
 type TPQRequestItem struct {
-	ArtifactID string
-	Comment    string // Описание находки (из м-м)
+	RequestID  string   `gorm:"primaryKey"`
+	ArtifactID string   `gorm:"primaryKey"`
+	Comment    string   // Другие поля, если есть: Quantity int, ItemOrder int, Main bool
+	Artifact   Artifact `gorm:"foreignKey:ArtifactID"`
 }
 
-type TPQCalculationRequest struct {
-	ID         string
-	Excavation string // Название раскопки
-	TPQItems   []TPQRequestItem
-	Result     string
-}
-
-var CurrentTPQRequest = TPQCalculationRequest{
-	ID:         "req_001",
-	Excavation: "",
-	TPQItems:   []TPQRequestItem{},
-	Result:     "—",
-}
-
-func FindArtifactByID(id string) *Artifact {
-	for _, artifact := range Artifacts {
-		if artifact.ID == id {
-			return &artifact
-		}
-	}
-	return nil
+type TPQRequest struct {
+	ID          string `gorm:"primaryKey"`
+	Status      string
+	CreatedAt   time.Time
+	CreatorID   uint
+	FormedAt    *time.Time
+	CompletedAt *time.Time
+	ModeratorID *uint
+	Excavation  string
+	Result      string
+	TPQItems    []TPQRequestItem `gorm:"foreignKey:RequestID"`
 }

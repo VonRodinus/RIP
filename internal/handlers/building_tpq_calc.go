@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"RIP/internal/db"
 	"RIP/internal/models"
 	"bytes"
+	"fmt"
 	"html/template"
 	"net/http"
 	"path/filepath"
@@ -10,7 +12,6 @@ import (
 )
 
 func BuildingTPQCalcHandler(w http.ResponseWriter, r *http.Request) {
-
 	pathParts := strings.Split(r.URL.Path, "/")
 	if len(pathParts) < 3 {
 		http.NotFound(w, r)
@@ -18,17 +19,28 @@ func BuildingTPQCalcHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	orderID := pathParts[2]
 
-	if models.CurrentTPQRequest.ID != orderID {
+	var req models.TPQRequest
+	if db.DB.Preload("TPQItems.Artifact").Where("id = ? AND status != ? AND creator_id = ?", orderID, "deleted", 1).First(&req).Error != nil {
 		http.NotFound(w, r)
 		return
 	}
 
+	// Calculate TPQ if status is completed
+	if req.Status == "completed" {
+		var maxTPQ int
+		for _, item := range req.TPQItems {
+			if item.Artifact.TPQ > maxTPQ {
+				maxTPQ = item.Artifact.TPQ
+			}
+		}
+		req.Result = fmt.Sprintf("%d", maxTPQ)
+		db.DB.Save(&req)
+	}
+
 	data := struct {
-		Artifacts         []models.Artifact
-		CurrentTPQRequest models.TPQCalculationRequest
+		CurrentTPQRequest models.TPQRequest
 	}{
-		Artifacts:         models.Artifacts,
-		CurrentTPQRequest: models.CurrentTPQRequest,
+		CurrentTPQRequest: req,
 	}
 
 	renderTemplate(w, "building_tpq_calc.html", data)
@@ -41,15 +53,11 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 		http.Error(w, "Template not found: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	// Создаём буфер и рендерим в него
 	var buf bytes.Buffer
 	if err := t.Execute(&buf, data); err != nil {
 		http.Error(w, "Template execution error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	// Если всё прошло – только теперь пишем в ответ
 	w.WriteHeader(http.StatusOK)
 	buf.WriteTo(w)
 }

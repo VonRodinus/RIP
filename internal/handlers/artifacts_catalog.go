@@ -1,12 +1,13 @@
 package handlers
 
 import (
+	"RIP/internal/db"
 	"RIP/internal/models"
-	"fmt"
 	"net/http"
+	"strings"
 )
 
-// CatalogHandler обрабатывает главную страницу с каталогом артефактов
+// ArtifactCatalogHandler handles the main page with the artifact catalog
 func ArtifactCatalogHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
@@ -14,46 +15,47 @@ func ArtifactCatalogHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	searchQuery := r.URL.Query().Get("artifact_name_or_tpq_filter")
-
 	filteredArtifacts := filterArtifacts(searchQuery)
+
+	currentReq := getCurrentDraftRequest()
+	var requestCount int
+	var currentTPQRequest models.TPQRequest
+	if currentReq != nil {
+		currentTPQRequest = *currentReq
+		requestCount = len(currentReq.TPQItems)
+	}
 
 	data := struct {
 		Artifacts         []models.Artifact
 		SearchQuery       string
 		RequestCount      int
-		CurrentTPQRequest models.TPQCalculationRequest
+		CurrentTPQRequest models.TPQRequest
 	}{
 		Artifacts:         filteredArtifacts,
 		SearchQuery:       searchQuery,
-		RequestCount:      len(models.CurrentTPQRequest.TPQItems),
-		CurrentTPQRequest: models.CurrentTPQRequest,
+		RequestCount:      requestCount,
+		CurrentTPQRequest: currentTPQRequest,
 	}
 
 	renderTemplate(w, "artifact_catalog.html", data)
 }
 
 func filterArtifacts(query string) []models.Artifact {
-	if query == "" {
-		return models.Artifacts
+	var artifacts []models.Artifact
+	q := db.DB.Where("status = ?", "active")
+	if query != "" {
+		searchTerm := "%" + strings.ToLower(query) + "%"
+		q = q.Where("LOWER(name) LIKE ? OR start_date::text LIKE ? OR end_date::text LIKE ? OR LOWER(epoch) LIKE ?", searchTerm, searchTerm, searchTerm, searchTerm)
 	}
-
-	var filtered []models.Artifact
-	for _, artifact := range models.Artifacts {
-		if contains(artifact.Name, query) ||
-			contains(fmt.Sprintf("%d", artifact.StartDate), query) ||
-			contains(fmt.Sprintf("%d", artifact.EndDate), query) ||
-			contains(artifact.Epoch, query) {
-			filtered = append(filtered, artifact)
-		}
-	}
-	return filtered
+	q.Find(&artifacts)
+	return artifacts
 }
 
-func contains(s, substr string) bool {
-	for i := 0; i <= len(s)-len(substr); i++ {
-		if s[i:i+len(substr)] == substr {
-			return true
-		}
+func getCurrentDraftRequest() *models.TPQRequest {
+	var req models.TPQRequest
+	err := db.DB.Preload("TPQItems").Where("status = ? AND creator_id = ?", "draft", 1).First(&req).Error
+	if err != nil {
+		return nil
 	}
-	return false
+	return &req
 }

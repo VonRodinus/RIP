@@ -12,43 +12,44 @@
     </style>
 </head>
 <body>
-<div class="desktop">
-
-    <!-- Навбар -->
-    <header class="header" id="mainHeader">
-        <div class="nav-container">
-            <div class="nav-background"></div>
-            <div class="nav-content">
-                <div class="logo-section">
-                    <a href="/" class="logo-text">Chronus</a>
+    <div class="desktop">
+        <!-- Navbar -->
+        <header class="header" id="mainHeader">
+            <div class="nav-container">
+                <div class="nav-background"></div>
+                <div class="nav-content">
+                    <div class="logo-section">
+                        <a href="/" class="logo-text">Chronus</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    </header>
-
-    <div class="white-section"> </div>
-
-    <!-- Основной контент -->
-    <div class="artifact-detail-section">
-        <div class="artifact-detail-container">
-            <div class="artifact-image-block">
-                <img src="{{.Artifact.ImageURL}}" alt="{{.Artifact.Name}}" class="detail-image" />
-            </div>
-
-            <div class="artifact-info-block">
-                <h1 class="artifact-detail-title">{{.Artifact.Name}}</h1>
-                <div class="artifact-detail-period">
-                    <p class="period-text">Время бытования: {{.Artifact.StartDate}}-{{.Artifact.EndDate}} {{.Artifact.Epoch}}</p>
-                    <p class="tpq-text">TPQ: {{.Artifact.TPQ}}</p>
+        </header>
+        <div class="white-section"></div>
+        
+        <!-- Main content -->
+        <div class="artifact-detail-section">
+            <div class="artifact-detail-container">
+                <div class="artifact-image-block">
+                    <img src="{{.Artifact.ImageURL}}" alt="{{.Artifact.Name}}" class="detail-image" />
                 </div>
-                <div class="artifact-description">
-                    <h3 class="description-title">Подробное описание</h3>
-                    <p class="description-text">{{.Artifact.Description}}</p>
+                <div class="artifact-info-block">
+                    <h1 class="artifact-detail-title">{{.Artifact.Name}}</h1>
+                    <div class="artifact-detail-period">
+                        <p class="period-text">Время бытования: {{.Artifact.StartDate}}-{{.Artifact.EndDate}} {{.Artifact.Epoch}}</p>
+                        <p class="tpq-text">TPQ: {{.Artifact.TPQ}}</p>
+                    </div>
+                    <div class="artifact-description">
+                        <h3 class="description-title">Подробное описание</h3>
+                        <p class="description-text">{{.Artifact.Description}}</p>
+                    </div>
+                    <form action="/add_artifact/{{.Artifact.ID}}" method="POST">
+                        <button class="add-to-request-btn">
+                            <span class="btn-text">Добавить в расчёт</span>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
 </body>
 </html>
