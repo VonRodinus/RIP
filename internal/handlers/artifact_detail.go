@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// ArtifactDetailHandler handles the artifact detail page
+// ArtifactDetailHandler обрабатывает страницу подробного просмотра артефакта
 func ArtifactDetailHandler(w http.ResponseWriter, r *http.Request) {
 	pathParts := strings.Split(r.URL.Path, "/")
 	if len(pathParts) < 3 {

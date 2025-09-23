@@ -2,7 +2,7 @@ package models
 
 import _ "gorm.io/gorm"
 
-// Artifact represents an artifact (service)
+// Artifact представляет артефакт (услугу)
 type Artifact struct {
 	ID          string `gorm:"primaryKey"`
 	Name        string

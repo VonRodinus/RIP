@@ -25,7 +25,7 @@ func BuildingTPQCalcHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Calculate TPQ if status is completed
+	// Расчёт TPQ, если статус - completed
 	if req.Status == "completed" {
 		var maxTPQ int
 		for _, item := range req.TPQItems {

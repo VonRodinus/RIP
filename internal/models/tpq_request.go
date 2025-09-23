@@ -5,9 +5,9 @@ import (
 )
 
 type TPQRequestItem struct {
-	RequestID  string   `gorm:"primaryKey"`
-	ArtifactID string   `gorm:"primaryKey"`
-	Comment    string   // Другие поля, если есть: Quantity int, ItemOrder int, Main bool
+	RequestID  string `gorm:"primaryKey"`
+	ArtifactID string `gorm:"primaryKey"`
+	Comment    string
 	Artifact   Artifact `gorm:"foreignKey:ArtifactID"`
 }
 

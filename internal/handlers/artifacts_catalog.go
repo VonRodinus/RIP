@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// ArtifactCatalogHandler handles the main page with the artifact catalog
+// ArtifactCatalogHandler обрабатывает главную страницу с каталогом артефактов
 func ArtifactCatalogHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)

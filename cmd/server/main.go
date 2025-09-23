@@ -10,14 +10,12 @@ import (
 func main() {
 	db.Init()
 
-	// Setup routes
 	http.HandleFunc("/", handlers.ArtifactCatalogHandler)
 	http.HandleFunc("/artifact/", handlers.ArtifactDetailHandler)
 	http.HandleFunc("/tpq_request/", handlers.BuildingTPQCalcHandler)
 	http.HandleFunc("/add_artifact/", handlers.AddArtifactToRequestHandler)
 	http.HandleFunc("/delete_request/", handlers.DeleteRequestHandler)
 
-	// Serve static files
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 

@@ -77,7 +77,9 @@
             <!-- Delete request button -->
             <div>
                 <form action="/delete_request/{{.CurrentTPQRequest.ID}}" method="POST">
-                    <button type="submit">Удалить заявку</button>
+                    <button type="submit" class="calculate-button">
+                        <span class="button-text">Удалить заявку</span>
+                    </button>
                 </form>
             </div>
         </main>
