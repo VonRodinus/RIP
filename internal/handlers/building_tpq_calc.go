@@ -4,7 +4,6 @@ import (
 	"RIP/internal/db"
 	"RIP/internal/models"
 	"bytes"
-	"fmt"
 	"html/template"
 	"net/http"
 	"path/filepath"
@@ -25,7 +24,7 @@ func BuildingTPQCalcHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Расчёт TPQ, если статус - completed
+	// Calculate TPQ if status is completed
 	if req.Status == "completed" {
 		var maxTPQ int
 		for _, item := range req.TPQItems {
@@ -33,7 +32,7 @@ func BuildingTPQCalcHandler(w http.ResponseWriter, r *http.Request) {
 				maxTPQ = item.Artifact.TPQ
 			}
 		}
-		req.Result = fmt.Sprintf("%d", maxTPQ)
+		req.Result = maxTPQ
 		db.DB.Save(&req)
 	}
 

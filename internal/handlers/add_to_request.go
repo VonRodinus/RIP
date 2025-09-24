@@ -37,7 +37,7 @@ func AddArtifactToRequestHandler(w http.ResponseWriter, r *http.Request) {
 			CreatedAt:  time.Now(),
 			CreatorID:  1,
 			Excavation: "Default Excavation",
-			Result:     "—",
+			Result:     0,
 		}
 		if err := db.DB.Create(currentReq).Error; err != nil {
 			http.Error(w, "Error creating request", http.StatusInternalServerError)

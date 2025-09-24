@@ -20,6 +20,6 @@ type TPQRequest struct {
 	CompletedAt *time.Time
 	ModeratorID *uint
 	Excavation  string
-	Result      string
+	Result      int
 	TPQItems    []TPQRequestItem `gorm:"foreignKey:RequestID"`
 }
