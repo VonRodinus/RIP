@@ -36,7 +36,7 @@ func AddArtifactToRequestHandler(w http.ResponseWriter, r *http.Request) {
 			Status:     "draft",
 			CreatedAt:  time.Now(),
 			CreatorID:  1,
-			Excavation: "Default Excavation",
+			Excavation: "",
 			Result:     0,
 		}
 		if err := db.DB.Create(currentReq).Error; err != nil {
@@ -51,6 +51,18 @@ func AddArtifactToRequestHandler(w http.ResponseWriter, r *http.Request) {
 		Comment:    "",
 	}
 	db.DB.FirstOrCreate(&item, models.TPQRequestItem{RequestID: currentReq.ID, ArtifactID: artifactID})
+
+	// Автоматический расчёт TPQ после добавления
+	var req models.TPQRequest
+	db.DB.Preload("TPQItems.Artifact").Where("id = ?", currentReq.ID).First(&req)
+	var maxTPQ int
+	for _, item := range req.TPQItems {
+		if item.Artifact.TPQ > maxTPQ {
+			maxTPQ = item.Artifact.TPQ
+		}
+	}
+	req.Result = maxTPQ
+	db.DB.Save(&req)
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

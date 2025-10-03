@@ -20,20 +20,8 @@ func BuildingTPQCalcHandler(w http.ResponseWriter, r *http.Request) {
 
 	var req models.TPQRequest
 	if db.DB.Preload("TPQItems.Artifact").Where("id = ? AND status != ? AND creator_id = ?", orderID, "deleted", 1).First(&req).Error != nil {
-		http.NotFound(w, r)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
-	}
-
-	// Calculate TPQ if status is completed
-	if req.Status == "completed" {
-		var maxTPQ int
-		for _, item := range req.TPQItems {
-			if item.Artifact.TPQ > maxTPQ {
-				maxTPQ = item.Artifact.TPQ
-			}
-		}
-		req.Result = maxTPQ
-		db.DB.Save(&req)
 	}
 
 	data := struct {
