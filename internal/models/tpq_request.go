@@ -1,3 +1,5 @@
+// internal/models/tpq_request.go
+// Add missing fields if any
 package models
 
 import (
