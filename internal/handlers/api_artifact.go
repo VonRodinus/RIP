@@ -141,7 +141,7 @@ func AddArtifactToRequest(w http.ResponseWriter, r *http.Request) {
 			ID:        uuid.New().String(),
 			Status:    "draft",
 			CreatedAt: time.Now(),
-			CreatorID: 1, // Fixed creator
+			CreatorID: GetCreatorID(), // Fixed creator
 		}
 		if err := db.DB.Create(currentReq).Error; err != nil {
 			http.Error(w, "Error creating request", http.StatusInternalServerError)
