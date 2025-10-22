@@ -3,3 +3,4 @@
 ### Лабораторная работа №1 - ветка topic-selection-and-project-setup (https://github.com/VonRodinus/RIP/tree/topic-selection-and-project-setup)
 ### Лабораторная работа №2 - ветка backend-db-integration (https://github.com/VonRodinus/RIP/tree/backend-db-integration)
 ### Лабораторная работа №3 - ветка rest-api-development (https://github.com/VonRodinus/RIP/tree/rest-api-development)
+### Лабораторная работа №4 - ветка add-auth-swagger-session-redis (https://github.com/VonRodinus/RIP/tree/add-auth-swagger-session-redis)
