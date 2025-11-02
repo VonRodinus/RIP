@@ -1,0 +1,797 @@
+basePath: /
+definitions:
+  handlers.CartInfo:
+    properties:
+      count:
+        type: integer
+      id:
+        type: string
+    type: object
+  models.Artifact:
+    properties:
+      ID:
+        type: string
+      ImageURL:
+        type: string
+      Status:
+        type: string
+      description:
+        type: string
+      end_date:
+        type: integer
+      epoch:
+        type: string
+      name:
+        type: string
+      start_date:
+        type: integer
+      tpq:
+        type: integer
+    type: object
+  models.TPQRequest:
+    properties:
+      completedAt:
+        type: string
+      createdAt:
+        type: string
+      creatorID:
+        type: integer
+      excavation:
+        type: string
+      formedAt:
+        type: string
+      id:
+        type: string
+      moderatorID:
+        type: integer
+      result:
+        description: Изменено на *int для nullable (пустое значение)
+        type: integer
+      status:
+        type: string
+    type: object
+  models.TPQRequestItem:
+    properties:
+      artifact:
+        $ref: '#/definitions/models.Artifact'
+      artifactID:
+        type: string
+      comment:
+        type: string
+      requestID:
+        type: string
+    type: object
+  models.User:
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API for managing artifacts and TPQ requests.
+  title: Chronus API
+  version: "1.0"
+paths:
+  /:
+    get:
+      description: Render HTML catalog of artifacts (optional auth)
+      parameters:
+      - description: Filter by name or TPQ
+        in: query
+        name: artifact_name_or_tpq_filter
+        type: string
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: HTML page
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Display artifact catalog
+      tags:
+      - artifacts
+  /api/artifacts:
+    get:
+      consumes:
+      - application/json
+      description: Get all active artifacts with optional filter
+      parameters:
+      - description: Filter by name or TPQ
+        in: query
+        name: filter
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Artifact'
+            type: array
+      summary: Get list of artifacts
+      tags:
+      - artifacts
+    post:
+      consumes:
+      - application/json
+      description: Create a new artifact (user required)
+      parameters:
+      - description: Artifact data
+        in: body
+        name: artifact
+        required: true
+        schema:
+          $ref: '#/definitions/models.Artifact'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Artifact'
+        "400":
+          description: Invalid request body
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Create new artifact
+      tags:
+      - artifacts
+  /api/artifacts/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an artifact (user required)
+      parameters:
+      - description: Artifact ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Artifact not found
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Delete artifact
+      tags:
+      - artifacts
+    get:
+      consumes:
+      - application/json
+      description: Get details of a specific artifact
+      parameters:
+      - description: Artifact ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Artifact'
+        "404":
+          description: Artifact not found
+          schema:
+            type: string
+      summary: Get artifact by ID
+      tags:
+      - artifacts
+    put:
+      consumes:
+      - application/json
+      description: Update an existing artifact (user required)
+      parameters:
+      - description: Artifact ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated artifact data
+        in: body
+        name: artifact
+        required: true
+        schema:
+          $ref: '#/definitions/models.Artifact'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Artifact'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Artifact not found
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Update artifact
+      tags:
+      - artifacts
+  /api/artifacts/{id}/add_to_request:
+    post:
+      consumes:
+      - application/json
+      description: Add an artifact to the current draft request (user required)
+      parameters:
+      - description: Artifact ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.TPQRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Artifact not found
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Add artifact to request
+      tags:
+      - artifacts
+  /api/artifacts/{id}/image:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload an image for the artifact (user required)
+      parameters:
+      - description: Artifact ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Image file
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Artifact'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Artifact not found
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Upload image for artifact
+      tags:
+      - artifacts
+  /api/tpq_requests:
+    get:
+      description: Get list of TPQ requests, filtered by user or all for moderator
+      parameters:
+      - description: Status filter
+        in: query
+        name: status
+        type: string
+      - description: From date
+        in: query
+        name: from_date
+        type: string
+      - description: To date
+        in: query
+        name: to_date
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.TPQRequest'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get TPQ requests
+      tags:
+      - tpq_requests
+  /api/tpq_requests/{id}:
+    delete:
+      description: Delete a draft TPQ request (user required, own draft)
+      parameters:
+      - description: Request ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Cannot delete
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Delete TPQ request
+      tags:
+      - tpq_requests
+    get:
+      description: Get details of a specific TPQ request (user required, own or moderator)
+      parameters:
+      - description: Request ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.TPQRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Request not found
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get TPQ request by ID
+      tags:
+      - tpq_requests
+    put:
+      consumes:
+      - application/json
+      description: Update a TPQ request (user required, own draft)
+      parameters:
+      - description: Request ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated request data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.TPQRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.TPQRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Request not found
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Update TPQ request
+      tags:
+      - tpq_requests
+  /api/tpq_requests/{id}/complete:
+    put:
+      description: Complete a formed TPQ request (moderator required)
+      parameters:
+      - description: Request ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.TPQRequest'
+        "400":
+          description: Cannot complete
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Complete TPQ request
+      tags:
+      - tpq_requests
+  /api/tpq_requests/{id}/form:
+    put:
+      description: Form a draft TPQ request (user required)
+      parameters:
+      - description: Request ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.TPQRequest'
+        "400":
+          description: Cannot form
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Form TPQ request
+      tags:
+      - tpq_requests
+  /api/tpq_requests/{id}/reject:
+    put:
+      description: Reject a formed TPQ request (moderator required)
+      parameters:
+      - description: Request ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.TPQRequest'
+        "400":
+          description: Cannot reject
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Reject TPQ request
+      tags:
+      - tpq_requests
+  /api/tpq_requests/{request_id}/items/{artifact_id}:
+    delete:
+      description: Delete an item from TPQ request (user required, own draft)
+      parameters:
+      - description: Request ID
+        in: path
+        name: request_id
+        required: true
+        type: string
+      - description: Artifact ID
+        in: path
+        name: artifact_id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Item not found
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Delete TPQ request item
+      tags:
+      - tpq_requests
+    put:
+      consumes:
+      - application/json
+      description: Update comment on TPQ request item (user required, own draft)
+      parameters:
+      - description: Request ID
+        in: path
+        name: request_id
+        required: true
+        type: string
+      - description: Artifact ID
+        in: path
+        name: artifact_id
+        required: true
+        type: string
+      - description: Updated item data
+        in: body
+        name: item
+        required: true
+        schema:
+          $ref: '#/definitions/models.TPQRequestItem'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.TPQRequestItem'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Item not found
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Update TPQ request item
+      tags:
+      - tpq_requests
+  /api/tpq_requests/cart:
+    get:
+      description: Get current draft request info (user required)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.CartInfo'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get cart info
+      tags:
+      - tpq_requests
+  /api/users/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return JWT token
+      parameters:
+      - description: Login credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token
+          schema:
+            type: object
+        "400":
+          description: Invalid request body
+          schema:
+            type: string
+        "401":
+          description: Invalid credentials
+          schema:
+            type: string
+      summary: User login
+      tags:
+      - users
+  /api/users/logout:
+    post:
+      description: Clear JWT token
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: User logout
+      tags:
+      - users
+  /api/users/me:
+    get:
+      description: Get details of the logged-in user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get current user
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Update logged-in user details
+      parameters:
+      - description: Updated user data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Invalid request body
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Error updating user
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Update current user
+      tags:
+      - users
+  /api/users/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account
+      parameters:
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Invalid request body
+          schema:
+            type: string
+        "500":
+          description: Error creating user
+          schema:
+            type: string
+      summary: Register new user
+      tags:
+      - users
+  /artifact/{id}:
+    get:
+      description: Render HTML page with artifact details
+      parameters:
+      - description: Artifact ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: HTML page
+          schema:
+            type: string
+        "404":
+          description: Artifact not found
+          schema:
+            type: string
+      summary: Display artifact details
+      tags:
+      - artifacts
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

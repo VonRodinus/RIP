@@ -6,12 +6,28 @@ import (
 	"log"
 	"net/http"
 	"strings"
+
+	_ "RIP/docs" // Import generated docs
+
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
+// @title Chronus API
+// @version 1.0
+// @description API for managing artifacts and TPQ requests.
+// @host localhost:8080
+// @BasePath /
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func main() {
 	db.Init()
 
-	// Existing routes
+	// Swagger route
+	http.HandleFunc("/swagger/", httpSwagger.WrapHandler)
+
+	// Existing routes (HTML, add auth if needed, but for SPA focus on API)
 	http.HandleFunc("/", handlers.ArtifactCatalogHandler)
 	http.HandleFunc("/artifact/", handlers.ArtifactDetailHandler)
 	http.HandleFunc("/tpq_request/", handlers.BuildingTPQCalcHandler)
@@ -56,13 +72,11 @@ func main() {
 		subPath := pathParts[1]
 		if subPath == "add_to_request" && r.Method == http.MethodPost {
 			handlers.AddArtifactToRequest(w, r)
-			return
-		}
-		if subPath == "image" && r.Method == http.MethodPost {
+		} else if subPath == "image" && r.Method == http.MethodPost {
 			handlers.UploadArtifactImage(w, r)
-			return
+		} else {
+			http.NotFound(w, r)
 		}
-		http.NotFound(w, r)
 	})
 
 	http.HandleFunc("/api/tpq_requests/cart", handlers.GetCartInfo) // GET

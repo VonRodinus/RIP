@@ -3,26 +3,39 @@ package handlers
 import (
 	"RIP/internal/db"
 	"RIP/internal/models"
+	"RIP/internal/session"
 	"net/http"
 	"strings"
 )
 
-// ArtifactCatalogHandler обрабатывает главную страницу с каталогом артефактов
+// ArtifactCatalogHandler godoc
+// @Summary Display artifact catalog
+// @Description Render HTML catalog of artifacts (optional auth)
+// @Tags artifacts
+// @Produce html
+// @Param artifact_name_or_tpq_filter query string false "Filter by name or TPQ"
+// @Success 200 {string} string "HTML page"
+// @Failure 404 {string} string "Not found"
+// @Router / [get]
 func ArtifactCatalogHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
 	}
 
+	sess := session.GetUser(r)
 	searchQuery := r.URL.Query().Get("artifact_name_or_tpq_filter")
 	filteredArtifacts := filterArtifacts(searchQuery)
 
-	currentReq := getCurrentDraftRequest()
+	var currentReq *models.TPQRequest
 	var requestCount int
 	var currentTPQRequest models.TPQRequest
-	if currentReq != nil {
-		currentTPQRequest = *currentReq
-		requestCount = len(currentReq.TPQItems)
+	if sess != nil {
+		currentReq = getCurrentDraftRequest(sess.UserID)
+		if currentReq != nil {
+			currentTPQRequest = *currentReq
+			requestCount = len(currentReq.TPQItems)
+		}
 	}
 
 	data := struct {
@@ -49,13 +62,4 @@ func filterArtifacts(query string) []models.Artifact {
 	}
 	q.Find(&artifacts)
 	return artifacts
-}
-
-func getCurrentDraftRequest() *models.TPQRequest {
-	var req models.TPQRequest
-	err := db.DB.Preload("TPQItems").Where("status = ? AND creator_id = ?", "draft", 1).First(&req).Error
-	if err != nil {
-		return nil
-	}
-	return &req
 }

@@ -6,5 +6,5 @@ type User struct {
 	gorm.Model
 	Login       string `gorm:"unique"`
 	Password    string
-	IsModerator bool `gorm:"default:false"`
+	IsModerator bool `gorm:"default:false" json:"is_moderator"`
 }

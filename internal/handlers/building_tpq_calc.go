@@ -3,10 +3,7 @@ package handlers
 import (
 	"RIP/internal/db"
 	"RIP/internal/models"
-	"bytes"
-	"html/template"
 	"net/http"
-	"path/filepath"
 	"strings"
 )
 
@@ -31,20 +28,4 @@ func BuildingTPQCalcHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	renderTemplate(w, "building_tpq_calc.html", data)
-}
-
-func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
-	tmplPath := filepath.Join("internal", "ui", tmpl)
-	t, err := template.ParseFiles(tmplPath)
-	if err != nil {
-		http.Error(w, "Template not found: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-	var buf bytes.Buffer
-	if err := t.Execute(&buf, data); err != nil {
-		http.Error(w, "Template execution error: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	buf.WriteTo(w)
 }

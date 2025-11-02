@@ -3,6 +3,7 @@ package handlers
 import (
 	"RIP/internal/db"
 	"RIP/internal/models"
+	"RIP/internal/session"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -28,6 +29,15 @@ func init() {
 	}
 }
 
+// GetArtifacts godoc
+// @Summary Get list of artifacts
+// @Description Get all active artifacts with optional filter
+// @Tags artifacts
+// @Accept json
+// @Produce json
+// @Param filter query string false "Filter by name or TPQ"
+// @Success 200 {array} models.Artifact
+// @Router /api/artifacts [get]
 func GetArtifacts(w http.ResponseWriter, r *http.Request) {
 	searchQuery := r.URL.Query().Get("filter")
 	var artifacts []models.Artifact
@@ -40,6 +50,16 @@ func GetArtifacts(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(artifacts)
 }
 
+// GetArtifact godoc
+// @Summary Get artifact by ID
+// @Description Get details of a specific artifact
+// @Tags artifacts
+// @Accept json
+// @Produce json
+// @Param id path string true "Artifact ID"
+// @Success 200 {object} models.Artifact
+// @Failure 404 {string} string "Artifact not found"
+// @Router /api/artifacts/{id} [get]
 func GetArtifact(w http.ResponseWriter, r *http.Request) {
 	pathParts := strings.Split(r.URL.Path, "/")
 	if len(pathParts) < 4 {
@@ -55,7 +75,24 @@ func GetArtifact(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(artifact)
 }
 
+// CreateArtifact godoc
+// @Summary Create new artifact
+// @Description Create a new artifact (user required)
+// @Tags artifacts
+// @Accept json
+// @Produce json
+// @Param artifact body models.Artifact true "Artifact data"
+// @Success 200 {object} models.Artifact
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 400 {string} string "Invalid request body"
+// @Security BearerAuth
+// @Router /api/artifacts [post]
 func CreateArtifact(w http.ResponseWriter, r *http.Request) {
+	sess := session.GetUser(r)
+	if sess == nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 	var artifact models.Artifact
 	if err := json.NewDecoder(r.Body).Decode(&artifact); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
@@ -70,7 +107,25 @@ func CreateArtifact(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(artifact)
 }
 
+// UpdateArtifact godoc
+// @Summary Update artifact
+// @Description Update an existing artifact (user required)
+// @Tags artifacts
+// @Accept json
+// @Produce json
+// @Param id path string true "Artifact ID"
+// @Param artifact body models.Artifact true "Updated artifact data"
+// @Success 200 {object} models.Artifact
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Artifact not found"
+// @Security BearerAuth
+// @Router /api/artifacts/{id} [put]
 func UpdateArtifact(w http.ResponseWriter, r *http.Request) {
+	sess := session.GetUser(r)
+	if sess == nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 	pathParts := strings.Split(r.URL.Path, "/")
 	if len(pathParts) < 4 {
 		http.Error(w, "Invalid URL", http.StatusBadRequest)
@@ -100,7 +155,24 @@ func UpdateArtifact(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(artifact)
 }
 
+// DeleteArtifact godoc
+// @Summary Delete artifact
+// @Description Delete an artifact (user required)
+// @Tags artifacts
+// @Accept json
+// @Produce json
+// @Param id path string true "Artifact ID"
+// @Success 204 {string} string "No Content"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Artifact not found"
+// @Security BearerAuth
+// @Router /api/artifacts/{id} [delete]
 func DeleteArtifact(w http.ResponseWriter, r *http.Request) {
+	sess := session.GetUser(r)
+	if sess == nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 	pathParts := strings.Split(r.URL.Path, "/")
 	if len(pathParts) < 4 {
 		http.Error(w, "Invalid URL", http.StatusBadRequest)
@@ -123,7 +195,24 @@ func DeleteArtifact(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// AddArtifactToRequest godoc
+// @Summary Add artifact to request
+// @Description Add an artifact to the current draft request (user required)
+// @Tags artifacts
+// @Accept json
+// @Produce json
+// @Param id path string true "Artifact ID"
+// @Success 200 {object} models.TPQRequest
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Artifact not found"
+// @Security BearerAuth
+// @Router /api/artifacts/{id}/add_to_request [post]
 func AddArtifactToRequest(w http.ResponseWriter, r *http.Request) {
+	sess := session.GetUser(r)
+	if sess == nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 	pathParts := strings.Split(r.URL.Path, "/")
 	if len(pathParts) < 4 {
 		http.Error(w, "Invalid URL", http.StatusBadRequest)
@@ -135,13 +224,13 @@ func AddArtifactToRequest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Artifact not found", http.StatusNotFound)
 		return
 	}
-	currentReq := getCurrentDraftRequest()
+	currentReq := getCurrentDraftRequest(sess.UserID)
 	if currentReq == nil {
 		currentReq = &models.TPQRequest{
 			ID:        uuid.New().String(),
 			Status:    "draft",
 			CreatedAt: time.Now(),
-			CreatorID: GetCreatorID(), // Fixed creator
+			CreatorID: sess.UserID,
 		}
 		if err := db.DB.Create(currentReq).Error; err != nil {
 			http.Error(w, "Error creating request", http.StatusInternalServerError)
@@ -157,7 +246,25 @@ func AddArtifactToRequest(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(currentReq)
 }
 
+// UploadArtifactImage godoc
+// @Summary Upload image for artifact
+// @Description Upload an image for the artifact (user required)
+// @Tags artifacts
+// @Accept multipart/form-data
+// @Produce json
+// @Param id path string true "Artifact ID"
+// @Param image formData file true "Image file"
+// @Success 200 {object} models.Artifact
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Artifact not found"
+// @Security BearerAuth
+// @Router /api/artifacts/{id}/image [post]
 func UploadArtifactImage(w http.ResponseWriter, r *http.Request) {
+	sess := session.GetUser(r)
+	if sess == nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 	pathParts := strings.Split(r.URL.Path, "/")
 	if len(pathParts) < 4 {
 		http.Error(w, "Invalid URL", http.StatusBadRequest)
